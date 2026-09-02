@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>321 離線日記 ☃︎</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☃︎</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☃︎</text></svg>">
+  <style>
+    :root {
+      --bg-color: #f7f8fa;
+      --card-bg: #ffffff;
+      --text-main: #2c3e50;
+      --text-sub: #7f8c8d;
+      --accent: #3498db;
+      --border-color: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 20px 15px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+    }
+
+    .editor-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-color);
+      margin-bottom: 24px;
+    }
+    .date-picker {
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      margin-bottom: 12px;
+      color: var(--text-main);
+      background: var(--bg-color);
+    }
+    textarea {
+      width: 100%;
+      height: 160px;
+      border: none;
+      outline: none;
+      resize: vertical;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-main);
+      font-family: inherit;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+
+    .entry-list { display: flex; flex-direction: column; gap: 12px; }
+    .entry-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+    .entry-date {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .entry-content {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.95rem;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      color: #e74c3c;
+      padding: 2px 6px;
+      font-size: 0.8rem;
+    }
+    .empty-tip {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>321 離線日記 ☃︎</h1>
+  </header>
+
+  <div class="editor-card">
+    <input type="date" id="entryDate" class="date-picker">
+    <textarea id="entryContent" placeholder="今天想記錄些什麼呢..."></textarea>
+    <div class="btn-group">
+      <button onclick="saveEntry()">儲存日記</button>
+    </div>
+  </div>
+
+  <div id="entryList" class="entry-list"></div>
+
+  <script>
+    // 初始化日期為今天
+    document.getElementById('entryDate').valueAsDate = new Date();
+
+    // 從 LocalStorage 載入日記
+    function loadEntries() {
+      const data = localStorage.getItem('my_standalone_journal');
+      return data ? JSON.parse(data) : [];
+    }
+
+    // 渲染日記列表
+    function renderEntries() {
+      const entries = loadEntries();
+      const container = document.getElementById('entryList');
+      
+      if (entries.length === 0) {
+        container.innerHTML = '<div class="empty-tip">目前還沒有日記，寫下第一篇吧！</div>';
+        return;
+      }
+
+      // 按日期倒序排列
+      entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      container.innerHTML = entries.map((item, index) => `
+        <div class="entry-card">
+          <div class="entry-date">${item.date}</div>
+          <div class="entry-content">${escapeHtml(item.text)}</div>
+          <button class="delete-btn" onclick="deleteEntry('${item.id}')">刪除</button>
+        </div>
+      `).join('');
+    }
+
+    // 新增/儲存日記
+    function saveEntry() {
+      const date = document.getElementById('entryDate').value;
+      const text = document.getElementById('entryContent').value.trim();
+
+      if (!date || !text) {
+        alert('請填寫日期與內容！');
+        return;
+      }
+
+      const entries = loadEntries();
+      const newEntry = {
+        id: Date.now().toString(),
+        date: date,
+        text: text
+      };
+
+      entries.push(newEntry);
+      localStorage.setItem('my_standalone_journal', JSON.stringify(entries));
+
+      document.getElementById('entryContent').value = '';
+      renderEntries();
+    }
+
+    // 刪除日記
+    function deleteEntry(id) {
+      if (!confirm('確定要刪除這篇日記嗎？')) return;
+      let entries = loadEntries();
+      entries = entries.filter(e => e.id !== id);
+      localStorage.setItem('my_standalone_journal', JSON.stringify(entries));
+      renderEntries();
+    }
+
+    // HTML 轉義防止注入
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[m];
+      });
+    }
+
+    // 首次載入
+    renderEntries();
+  </script>
+</body>
+</html>
