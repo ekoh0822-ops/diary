@@ -29,7 +29,7 @@
 
     header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     h1 {
       font-size: 1.5rem;
@@ -38,6 +38,56 @@
       color: var(--text-main);
     }
 
+    /* 478 呼吸靜態圓圈區塊 */
+    .breath-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .breath-btn {
+      background: linear-gradient(135deg, #3498db, #2ecc71);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+    .breath-circle-container {
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 5px;
+    }
+    .breath-circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(52, 152, 219, 0.15);
+      border: 2px solid #3498db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #2980b9;
+      /* 圓圈固定不動 */
+    }
+    .breath-status {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      margin-top: 8px;
+      min-height: 24px;
+    }
+
+    /* 321 編輯區塊 */
     .editor-card {
       background: var(--card-bg);
       border-radius: 12px;
@@ -56,34 +106,41 @@
       color: var(--text-main);
       background: var(--bg-color);
     }
+    .section-label {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin: 12px 0 6px 0;
+    }
     textarea {
       width: 100%;
-      height: 160px;
-      border: none;
+      height: 80px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 10px;
       outline: none;
       resize: vertical;
-      font-size: 1rem;
-      line-height: 1.6;
+      font-size: 0.95rem;
+      line-height: 1.5;
       color: var(--text-main);
       font-family: inherit;
     }
     .btn-group {
       display: flex;
       justify-content: flex-end;
-      margin-top: 10px;
+      margin-top: 14px;
     }
-    button {
+    .save-btn {
       background: var(--accent);
       color: white;
       border: none;
-      padding: 8px 18px;
+      padding: 8px 22px;
       border-radius: 6px;
       font-size: 0.9rem;
       cursor: pointer;
-      transition: opacity 0.2s;
     }
-    button:hover { opacity: 0.9; }
 
+    /* 歷史紀錄列表 */
     .entry-list { display: flex; flex-direction: column; gap: 12px; }
     .entry-card {
       background: var(--card-bg);
@@ -95,22 +152,21 @@
     .entry-date {
       font-size: 0.85rem;
       color: var(--text-sub);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       font-weight: 500;
     }
-    .entry-content {
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 0.95rem;
-    }
+    .entry-section { margin-bottom: 8px; font-size: 0.95rem; white-space: pre-wrap; }
+    .entry-tag { font-weight: bold; color: var(--accent); }
     .delete-btn {
       position: absolute;
       top: 12px;
       right: 12px;
       background: transparent;
       color: #e74c3c;
+      border: none;
       padding: 2px 6px;
       font-size: 0.8rem;
+      cursor: pointer;
     }
     .empty-tip {
       text-align: center;
@@ -126,27 +182,99 @@
     <h1>321 離線日記 ☃︎</h1>
   </header>
 
+  <!-- 478 呼吸卡片 (靜態圓圈) -->
+  <div class="breath-card">
+    <button class="breath-btn" id="breathBtn" onclick="toggleBreath()">🫁 開始 4-7-8 呼吸放鬆</button>
+    <div class="breath-circle-container">
+      <div class="breath-circle" id="breathCircle">準備</div>
+    </div>
+    <div class="breath-status" id="breathStatus">點擊按鈕開始放鬆</div>
+  </div>
+
+  <!-- 321 日記編輯卡片 -->
   <div class="editor-card">
     <input type="date" id="entryDate" class="date-picker">
-    <textarea id="entryContent" placeholder="今天想記錄些什麼呢..."></textarea>
+    
+    <div class="section-label">✨ 三件感恩的事</div>
+    <textarea id="gratitude" placeholder="1. &#10;2. &#10;3. "></textarea>
+    
+    <div class="section-label">🌿 兩件做得好的事</div>
+    <textarea id="progress" placeholder="1. &#10;2. "></textarea>
+
+    <div class="section-label">💡 一句自我肯定</div>
+    <textarea id="affirmation" placeholder="1. "></textarea>
+
     <div class="btn-group">
-      <button onclick="saveEntry()">儲存日記</button>
+      <button class="save-btn" onclick="saveEntry()">儲存日記</button>
     </div>
   </div>
 
   <div id="entryList" class="entry-list"></div>
 
   <script>
-    // 初始化日期為今天
     document.getElementById('entryDate').valueAsDate = new Date();
 
-    // 從 LocalStorage 載入日記
+    // --- 478 呼吸邏輯 (正數數字，圓圈不動) ---
+    let breathTimer = null;
+    let isBreathing = false;
+
+    function toggleBreath() {
+      const btn = document.getElementById('breathBtn');
+      const circle = document.getElementById('breathCircle');
+      const status = document.getElementById('breathStatus');
+      
+      if (isBreathing) {
+        clearInterval(breathTimer);
+        isBreathing = false;
+        btn.innerText = "🫁 開始 4-7-8 呼吸放鬆";
+        circle.innerText = "準備";
+        status.innerText = "放鬆結束，保持好心情！";
+        return;
+      }
+
+      isBreathing = true;
+      btn.innerText = "⏹ 結束呼吸放鬆";
+      startBreathCycle();
+    }
+
+    function startBreathCycle() {
+      const circle = document.getElementById('breathCircle');
+      const status = document.getElementById('breathStatus');
+
+      let phases = [
+        { name: "吸氣 🫁", duration: 4 },
+        { name: "憋氣 ⏸", duration: 7 },
+        { name: "呼氣 🌬", duration: 8 }
+      ];
+
+      let phaseIdx = 0;
+      let count = 1; // 從 1 開始正數
+
+      function tick() {
+        let current = phases[phaseIdx];
+        
+        // 顯示正數數字 (1 -> 2 -> 3 ...)
+        circle.innerText = count;
+        status.innerText = `${current.name} (${count} / ${current.duration} 秒)`;
+
+        if (count >= current.duration) {
+          phaseIdx = (phaseIdx + 1) % phases.length;
+          count = 1; // 換階段時重新從 1 正數
+        } else {
+          count++;
+        }
+      }
+
+      tick();
+      breathTimer = setInterval(tick, 1000);
+    }
+
+    // --- 日記儲存與展示邏輯 ---
     function loadEntries() {
-      const data = localStorage.getItem('my_standalone_journal');
+      const data = localStorage.getItem('my_321_journal_local');
       return data ? JSON.parse(data) : [];
     }
 
-    // 渲染日記列表
     function renderEntries() {
       const entries = loadEntries();
       const container = document.getElementById('entryList');
@@ -156,25 +284,27 @@
         return;
       }
 
-      // 按日期倒序排列
       entries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-      container.innerHTML = entries.map((item, index) => `
+      container.innerHTML = entries.map(item => `
         <div class="entry-card">
           <div class="entry-date">${item.date}</div>
-          <div class="entry-content">${escapeHtml(item.text)}</div>
+          ${item.gratitude ? `<div class="entry-section"><span class="entry-tag">✨ 三件感恩的事：</span><br>${escapeHtml(item.gratitude)}</div>` : ''}
+          ${item.progress ? `<div class="entry-section"><span class="entry-tag">🌿 兩件做得好的事：</span><br>${escapeHtml(item.progress)}</div>` : ''}
+          ${item.affirmation ? `<div class="entry-section"><span class="entry-tag">💡 一句自我肯定：</span><br>${escapeHtml(item.affirmation)}</div>` : ''}
           <button class="delete-btn" onclick="deleteEntry('${item.id}')">刪除</button>
         </div>
       `).join('');
     }
 
-    // 新增/儲存日記
     function saveEntry() {
       const date = document.getElementById('entryDate').value;
-      const text = document.getElementById('entryContent').value.trim();
+      const gratitude = document.getElementById('gratitude').value.trim();
+      const progress = document.getElementById('progress').value.trim();
+      const affirmation = document.getElementById('affirmation').value.trim();
 
-      if (!date || !text) {
-        alert('請填寫日期與內容！');
+      if (!date || (!gratitude && !progress && !affirmation)) {
+        alert('請至少填寫一個欄位！');
         return;
       }
 
@@ -182,26 +312,28 @@
       const newEntry = {
         id: Date.now().toString(),
         date: date,
-        text: text
+        gratitude: gratitude,
+        progress: progress,
+        affirmation: affirmation
       };
 
       entries.push(newEntry);
-      localStorage.setItem('my_standalone_journal', JSON.stringify(entries));
+      localStorage.setItem('my_321_journal_local', JSON.stringify(entries));
 
-      document.getElementById('entryContent').value = '';
+      document.getElementById('gratitude').value = '';
+      document.getElementById('progress').value = '';
+      document.getElementById('affirmation').value = '';
       renderEntries();
     }
 
-    // 刪除日記
     function deleteEntry(id) {
       if (!confirm('確定要刪除這篇日記嗎？')) return;
       let entries = loadEntries();
       entries = entries.filter(e => e.id !== id);
-      localStorage.setItem('my_standalone_journal', JSON.stringify(entries));
+      localStorage.setItem('my_321_journal_local', JSON.stringify(entries));
       renderEntries();
     }
 
-    // HTML 轉義防止注入
     function escapeHtml(str) {
       return str.replace(/[&<>"']/g, function(m) {
         return {
@@ -214,7 +346,6 @@
       });
     }
 
-    // 首次載入
     renderEntries();
   </script>
 </body>
