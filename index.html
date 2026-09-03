@@ -314,7 +314,7 @@
   <!-- 2. 頁籤切換 -->
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('write')">✎﹏ 寫日記</button>
-    <button class="tab-btn" onclick="switchTab('history')">💬 歷史紀錄</button>
+    <button class="tab-btn" onclick="switchTab('history')">🕮 歷史紀錄</button>
   </div>
 
   <!-- 頁籤一：寫日記 (專注今天) -->
@@ -339,22 +339,22 @@
 
       <div class="section-card">
         <div class="section-title">࿐ ࿔*:･ﾟ 釋放Release</div>
-        <div class="section-sub">今天我表現不錯的地方</div>
+        <div class="section-sub">寫下事情與感受，看見它，讓它去吧</div>
         <div class="input-group">
           <div class="input-label">第 1 件</div>
-          <input type="text" id="w1" placeholder="例：按時完成了工作">
+          <input type="text" id="w1" placeholder="例：論文還是沒寫完">
         </div>
         <div class="input-group">
           <div class="input-label">第 2 件</div>
-          <input type="text" id="w2" placeholder="例：堅持做了 10 分鐘運動">
+          <input type="text" id="w2" placeholder="例：今日份額的運動量沒有達到，人懶懶的，全怪陰天">
         </div>
       </div>
 
       <div class="section-card">
-        <div class="section-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 一句自我肯定</div>
-        <div class="section-sub">給自己一句真誠的鼓勵</div>
+        <div class="section-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 顯化Manifest</div>
+        <div class="section-sub">寫下自己想像中最好的事情已經發生</div>
         <div class="input-group">
-          <input type="text" id="a1" placeholder="例：我今天按時完成了工作，我可真有毅力！">
+          <input type="text" id="a1" placeholder="例：我按時寫完了論文，真是超有毅力的人！">
         </div>
       </div>
 
@@ -548,7 +548,7 @@
         if (item.a) {
           contentHtml += `
             <div class="entry-block">
-              <div class="entry-block-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 自我肯定</div>
+              <div class="entry-block-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 顯化Manifest</div>
               <div class="item-row">
                 <span>${escapeHtml(item.a)}</span>
                 <div class="item-actions">
@@ -596,7 +596,7 @@
       }
 
       if (item.a) {
-        textParts.push('【一句自我肯定】');
+        textParts.push('【顯化Manifest】');
         textParts.push(item.a);
       }
 
@@ -631,17 +631,17 @@
         fullTextParts.push(`【${item.date}】`);
 
         if (item.g && item.g.length) {
-          fullTextParts.push('感恩的事：');
+          fullTextParts.push('感恩Gratitude：');
           item.g.forEach((x, i) => fullTextParts.push(`  ${i + 1}. ${x}`));
         }
 
         if (item.w && item.w.length) {
-          fullTextParts.push('做得好的事：');
+          fullTextParts.push('釋放Release：');
           item.w.forEach((x, i) => fullTextParts.push(`  ${i + 1}. ${x}`));
         }
 
         if (item.a) {
-          fullTextParts.push(`自我肯定：${item.a}`);
+          fullTextParts.push(`顯化Manifest：${item.a}`);
         }
 
         fullTextParts.push('\n------------------------\n');
@@ -683,7 +683,7 @@
       // 清空表格
       ['g1','g2','g3','w1','w2','a1'].forEach(id => document.getElementById(id).value = '');
       
-      alert('保存成功！已收納至「💬 歷史紀錄」');
+      alert('保存成功！已收納至「🕮 歷史紀錄」');
       switchTab('history');
     }
 
