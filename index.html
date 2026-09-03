@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>321 日記單機版 ☃︎</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☃︎</text></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☃︎</text></svg>">
+  <title>感恩顯化日記單機版 ☃︎</title>
+  <!-- 將圖示與 Apple Touch Icon 更新為 ✨ 閃爍星星 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
   <style>
     :root {
       --bg-color: #f8fafc;
@@ -299,7 +300,7 @@
 <body>
 
   <header>
-    <h1>321 日記單機版 ☃︎</h1>
+    <h1>感恩顯化日記單機版 ☃︎</h1>
   </header>
 
   <!-- 1. 最頂部：4-7-8 呼吸儀式按鈕 -->
@@ -464,7 +465,7 @@
             clearInterval(breathInterval);
             btn.className = 'breath-btn';
             btn.innerHTML = `
-              <div class="btn-icon">☃︎</div>
+              <div class="btn-icon">✨</div>
               <div>完成放鬆</div>
               <div class="btn-sub">再來一次</div>
             `;
@@ -624,7 +625,7 @@
 
       entries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-      let fullTextParts = ['=== 321 日記完整紀錄 ===\n'];
+      let fullTextParts = ['=== 感恩顯化日記完整紀錄 ===\n'];
 
       entries.forEach(item => {
         fullTextParts.push(`【${item.date}】`);
