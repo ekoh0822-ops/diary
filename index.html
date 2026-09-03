@@ -12,7 +12,7 @@
       --card-bg: #ffffff;
       --text-main: #1e293b;
       --text-sub: #64748b;
-      --accent: #3b82f6;
+      --accent: #0284c7;
       --border-color: #e2e8f0;
     }
 
@@ -57,11 +57,8 @@
       border: 1px solid var(--border-color);
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
       margin-bottom: 20px;
-      transition: all 0.3s ease;
     }
-    .calendar-card.collapsed {
-      display: none;
-    }
+    .calendar-card.collapsed { display: none; }
     .date-picker-input {
       width: 100%;
       border: 1px solid var(--border-color);
@@ -77,7 +74,7 @@
     .breath-container {
       display: flex;
       justify-content: center;
-      margin: 15px 0 20px 0;
+      margin: 10px 0 20px 0;
     }
     .breath-btn {
       width: 105px;
@@ -114,77 +111,105 @@
       color: #1e293b;
     }
 
-    /* 寫作編輯卡片 */
-    .editor-card {
+    /* 321 引導寫作卡片 */
+    .section-card {
       background: var(--card-bg);
       border-radius: 16px;
       padding: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
       border: 1px solid var(--border-color);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
-    textarea {
-      width: 100%;
-      height: 150px;
-      border: none;
-      outline: none;
-      resize: none;
-      font-size: 1.05rem;
-      line-height: 1.7;
-      color: var(--text-main);
-      font-family: inherit;
-    }
-    .editor-footer {
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border-color);
+      gap: 8px;
+      margin-bottom: 4px;
     }
-    .word-count {
+    .section-sub {
       font-size: 0.85rem;
       color: var(--text-sub);
+      margin-bottom: 14px;
     }
+    .input-group {
+      margin-bottom: 12px;
+    }
+    .input-group:last-child { margin-bottom: 0; }
+    .input-label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
     button.save-btn {
+      width: 100%;
       background: var(--accent);
       color: white;
       border: none;
-      padding: 8px 20px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 500;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
       cursor: pointer;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
       transition: opacity 0.2s;
+      margin-bottom: 24px;
     }
-    button.save-btn:hover { opacity: 0.9; }
+    button.save-btn:hover { opacity: 0.95; }
 
-    /* 日記列表 */
+    /* 日記列表卡片 */
     .entry-list { display: flex; flex-direction: column; gap: 16px; }
     .entry-card {
       background: var(--card-bg);
-      border-radius: 14px;
-      padding: 18px;
+      border-radius: 16px;
+      padding: 20px;
       border: 1px solid var(--border-color);
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
       position: relative;
     }
     .entry-date {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text-sub);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
     }
-    .entry-content {
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 1rem;
+    .entry-block {
+      margin-bottom: 12px;
+    }
+    .entry-block:last-child { margin-bottom: 0; }
+    .entry-block-title {
+      font-size: 0.9rem;
+      font-weight: 700;
       color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .entry-block-content {
+      font-size: 0.95rem;
+      color: #334155;
+      white-space: pre-wrap;
+      line-height: 1.6;
     }
     .delete-btn {
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: 18px;
+      right: 18px;
       background: transparent;
       border: none;
       color: #ef4444;
@@ -213,63 +238,86 @@
     <input type="date" id="entryDate" class="date-picker-input">
   </div>
 
-  <div class="editor-card">
-    <!-- 固定尺寸的 4-7-8 呼吸圓形按鈕 -->
-    <div class="breath-container">
-      <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">4-7-8<br>呼吸</button>
+  <!-- 4-7-8 呼吸按鈕 -->
+  <div class="breath-container">
+    <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">4-7-8<br>呼吸</button>
+  </div>
+
+  <!-- 321 日記表單區 -->
+  <form id="diaryForm" onsubmit="event.preventDefault(); saveEntry();">
+    <!-- 3 件感恩的事 -->
+    <div class="section-card">
+      <div class="section-title">記錄今天自己感恩的三件事</div>
+      <div class="section-sub">今天讓我感到感激的事情</div>
+      <div class="input-group">
+        <div class="input-label">第 1 件</div>
+        <input type="text" id="g1" placeholder="例：今天天氣很好">
+      </div>
+      <div class="input-group">
+        <div class="input-label">第 2 件</div>
+        <input type="text" id="g2" placeholder="例：吃到美味的晚餐">
+      </div>
+      <div class="input-group">
+        <div class="input-label">第 3 件</div>
+        <input type="text" id="g3" placeholder="例：工作順利完成">
+      </div>
     </div>
 
-    <textarea id="entryContent" placeholder="今天想記錄些什麼呢..." oninput="updateWordCount()"></textarea>
-    
-    <div class="editor-footer">
-      <span id="wordCount" class="word-count">0 字</span>
-      <button class="save-btn" onclick="saveEntry()">儲存日記</button>
+    <!-- 2 件做得好的事 -->
+    <div class="section-card">
+      <div class="section-title">記錄可以讓今天變得更贊的兩件事</div>
+      <div class="section-sub">今天我表現不錯的地方</div>
+      <div class="input-group">
+        <div class="input-label">第 1 件</div>
+        <input type="text" id="w1" placeholder="例：按時完成了工作">
+      </div>
+      <div class="input-group">
+        <div class="input-label">第 2 件</div>
+        <input type="text" id="w2" placeholder="例：堅持做了 10 分鐘運動">
+      </div>
     </div>
-  </div>
+
+    <!-- 1句自我肯定 -->
+    <div class="section-card">
+      <div class="section-title">寫一句積極的自我肯定</div>
+      <div class="section-sub">給自己一句真誠的鼓勵</div>
+      <div class="input-group">
+        <input type="text" id="a1" placeholder="例：我今天按時完成了工作，我可真有毅力！">
+      </div>
+    </div>
+
+    <button type="submit" class="save-btn">保存今日記錄</button>
+  </form>
 
   <div id="entryList" class="entry-list"></div>
 
   <script>
-    // 初始化日期為今天
     document.getElementById('entryDate').valueAsDate = new Date();
 
-    // 日曆摺疊開關
     function toggleCalendar() {
-      const card = document.getElementById('calendarCard');
-      card.classList.toggle('collapsed');
+      document.getElementById('calendarCard').classList.toggle('collapsed');
     }
 
-    // 字數計算
-    function updateWordCount() {
-      const text = document.getElementById('entryContent').value;
-      document.getElementById('wordCount').innerText = `${text.length} 字`;
-    }
-
-    // 4-7-8 正向計數呼吸邏輯 (從小到大)
+    // 4-7-8 正向計數呼吸
     let isBreathing = false;
     let breathInterval = null;
 
     function toggleBreath() {
       const btn = document.getElementById('breathBtn');
       if (isBreathing) {
-        stopBreathing();
+        isBreathing = false;
+        clearInterval(breathInterval);
+        btn.className = 'breath-btn';
+        btn.innerHTML = '4-7-8<br>呼吸';
         return;
       }
       isBreathing = true;
       startBreathCycle();
     }
 
-    function stopBreathing() {
-      isBreathing = false;
-      clearInterval(breathInterval);
-      const btn = document.getElementById('breathBtn');
-      btn.className = 'breath-btn';
-      btn.innerHTML = '4-7-8<br>呼吸';
-    }
-
     function startBreathCycle() {
       const btn = document.getElementById('breathBtn');
-      let step = 'inhale'; // inhale (1-4), hold (1-7), exhale (1-8)
+      let step = 'inhale';
       let count = 1;
 
       btn.className = 'breath-btn inhale';
@@ -277,15 +325,13 @@
 
       breathInterval = setInterval(() => {
         if (!isBreathing) return;
-
         count++;
 
         if (step === 'inhale') {
           if (count <= 4) {
             btn.innerHTML = `吸氣...<br>(${count})`;
           } else {
-            step = 'hold';
-            count = 1;
+            step = 'hold'; count = 1;
             btn.className = 'breath-btn hold';
             btn.innerHTML = `屏息...<br>(${count})`;
           }
@@ -293,8 +339,7 @@
           if (count <= 7) {
             btn.innerHTML = `屏息...<br>(${count})`;
           } else {
-            step = 'exhale';
-            count = 1;
+            step = 'exhale'; count = 1;
             btn.className = 'breath-btn exhale';
             btn.innerHTML = `呼氣...<br>(${count})`;
           }
@@ -302,8 +347,7 @@
           if (count <= 8) {
             btn.innerHTML = `呼氣...<br>(${count})`;
           } else {
-            step = 'inhale';
-            count = 1;
+            step = 'inhale'; count = 1;
             btn.className = 'breath-btn inhale';
             btn.innerHTML = `吸氣...<br>(${count})`;
           }
@@ -311,9 +355,9 @@
       }, 1000);
     }
 
-    // 本地儲存與渲染
+    // LocalStorage 讀取與寫入
     function loadEntries() {
-      const data = localStorage.getItem('my_standalone_journal');
+      const data = localStorage.getItem('my_standalone_journal_321');
       return data ? JSON.parse(data) : [];
     }
 
@@ -322,46 +366,75 @@
       const container = document.getElementById('entryList');
       
       if (entries.length === 0) {
-        container.innerHTML = '<div class="empty-tip">目前還沒有日記，寫下第一篇吧！</div>';
+        container.innerHTML = '<div class="empty-tip">目前還沒有記錄，開始寫下第一篇吧！</div>';
         return;
       }
 
       entries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-      container.innerHTML = entries.map((item) => `
-        <div class="entry-card">
-          <div class="entry-date">${item.date}</div>
-          <div class="entry-content">${escapeHtml(item.text)}</div>
-          <button class="delete-btn" onclick="deleteEntry('${item.id}')">刪除</button>
-        </div>
-      `).join('');
+      container.innerHTML = entries.map((item) => {
+        let contentHtml = '';
+        if (item.g && item.g.length) {
+          contentHtml += `<div class="entry-block"><div class="entry-block-title">🙏 記錄今天自己感恩的三件事</div><div class="entry-block-content">${item.g.map((x, i) => `${i+1}. ${escapeHtml(x)}`).join('\n')}</div></div>`;
+        }
+        if (item.w && item.w.length) {
+          contentHtml += `<div class="entry-block"><div class="entry-block-title">⭐ 記錄可以讓今天變得更贊的兩件事</div><div class="entry-block-content">${item.w.map((x, i) => `${i+1}. ${escapeHtml(x)}`).join('\n')}</div></div>`;
+        }
+        if (item.a) {
+          contentHtml += `<div class="entry-block"><div class="entry-block-title">💪 寫一句積極的自我肯定</div><div class="entry-block-content">${escapeHtml(item.a)}</div></div>`;
+        }
+
+        return `
+          <div class="entry-card">
+            <div class="entry-date">${item.date}</div>
+            ${contentHtml}
+            <button class="delete-btn" onclick="deleteEntry('${item.id}')">刪除</button>
+          </div>
+        `;
+      }).join('');
     }
 
     function saveEntry() {
       const date = document.getElementById('entryDate').value;
-      const text = document.getElementById('entryContent').value.trim();
+      const g = [
+        document.getElementById('g1').value.trim(),
+        document.getElementById('g2').value.trim(),
+        document.getElementById('g3').value.trim()
+      ].filter(Boolean);
 
-      if (!date || !text) {
-        alert('請填寫日期與內容！');
+      const w = [
+        document.getElementById('w1').value.trim(),
+        document.getElementById('w2').value.trim()
+      ].filter(Boolean);
+
+      const a = document.getElementById('a1').value.trim();
+
+      if (!date) {
+        alert('請選擇日期！');
+        return;
+      }
+      if (g.length === 0 && w.length === 0 && !a) {
+        alert('請至少填寫一項內容！');
         return;
       }
 
       const entries = loadEntries();
-      const newEntry = { id: Date.now().toString(), date, text };
+      const newEntry = { id: Date.now().toString(), date, g, w, a };
 
       entries.push(newEntry);
-      localStorage.setItem('my_standalone_journal', JSON.stringify(entries));
+      localStorage.setItem('my_standalone_journal_321', JSON.stringify(entries));
 
-      document.getElementById('entryContent').value = '';
-      updateWordCount();
+      // 清空輸入框
+      ['g1','g2','g3','w1','w2','a1'].forEach(id => document.getElementById(id).value = '');
+      
       renderEntries();
     }
 
     function deleteEntry(id) {
-      if (!confirm('確定要刪除這篇日記嗎？')) return;
+      if (!confirm('確定要刪除這篇記錄嗎？')) return;
       let entries = loadEntries();
       entries = entries.filter(e => e.id !== id);
-      localStorage.setItem('my_standalone_journal', JSON.stringify(entries));
+      localStorage.setItem('my_standalone_journal_321', JSON.stringify(entries));
       renderEntries();
     }
 
