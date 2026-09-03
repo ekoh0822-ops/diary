@@ -316,15 +316,8 @@
     <button class="tab-btn" onclick="switchTab('history')">📖 歷史紀錄</button>
   </div>
 
-  <!-- 頁籤一：寫日記 -->
+  <!-- 頁籤一：寫日記 (專注今天) -->
   <div id="tab-write" class="tab-content active">
-    
-    <div class="date-card">
-      <label for="entryDate">📅 日記日期</label>
-      <input type="date" id="entryDate" class="date-picker-input">
-    </div>
-
-    <!-- 321 表單 -->
     <form id="diaryForm" onsubmit="event.preventDefault(); saveEntry();">
       <div class="section-card">
         <div class="section-title">🙏 三件感恩的事</div>
@@ -368,7 +361,7 @@
     </form>
   </div>
 
-  <!-- 頁籤二：歷史紀錄（含日曆篩選） -->
+  <!-- 頁籤二：歷史紀錄（查閱與選擇特定日期） -->
   <div id="tab-history" class="tab-content">
     
     <div class="date-card">
@@ -385,7 +378,14 @@
   </div>
 
   <script>
-    document.getElementById('entryDate').valueAsDate = new Date();
+    // 獲取今天 ISO 日期格式 (YYYY-MM-DD)
+    function getTodayString() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
 
     // 頁籤切換邏輯
     function switchTab(tabName) {
@@ -603,9 +603,9 @@
       });
     }
 
-    // 儲存日記
+    // 儲存今天日記
     function saveEntry() {
-      const date = document.getElementById('entryDate').value;
+      const date = getTodayString(); // 預設使用今天日期
       const g = [
         document.getElementById('g1').value.trim(),
         document.getElementById('g2').value.trim(),
@@ -619,7 +619,6 @@
 
       const a = document.getElementById('a1').value.trim();
 
-      if (!date) { alert('請選擇日期！'); return; }
       if (g.length === 0 && w.length === 0 && !a) { alert('請至少填寫一項內容！'); return; }
 
       const entries = loadEntries();
