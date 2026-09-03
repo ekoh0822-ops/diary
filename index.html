@@ -4,10 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>感恩顯化日記單機版 ☃︎</title>
-  <!-- 正確的 PNG 格式 Icon（iPhone 主畫面與 Chrome 完全支援） -->
-  <!-- 修正後的 UTF-8 清晰 ✨ 圖示 (iPhone 主畫面與 Chrome 100% 通用) -->
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+
+  <!-- 經過 URL 安全編碼的 ✨ 圖示 (相容 Chrome PWA 與 Safari 主畫面) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%9C%A8%3C%2Ftext%3E%3C%2Fsvg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%E2%9C%A8%3C%2Ftext%3E%3C%2Fsvg%3E">
+
+  <style>
+    :root {
       --bg-color: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #1e293b;
@@ -253,7 +256,7 @@
     .item-content {
       font-size: 0.95rem;
       color: #334155;
-      white-space: pre-wrap; /* 保持使用者換行 */
+      white-space: pre-wrap;
       word-break: break-word;
       background: #f8fafc;
       padding: 10px 12px;
@@ -321,7 +324,7 @@
       <div class="section-card">
         <div class="section-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 顯化Manifest</div>
         <div class="section-sub">寫下自己想像中最好的事情已經發生</div>
-        <textarea id="aText" style="min-height: 70px;" placeholder="例：抽中我推的演唱會神席！之類的"></textarea>
+        <textarea id="aText" style="min-height: 70px;" placeholder="例：我按時寫完了論文，真是超有毅力的人！"></textarea>
       </div>
 
       <button type="submit" class="save-btn">保存今日記錄</button>
@@ -483,7 +486,6 @@
       container.innerHTML = entries.map((item) => {
         let contentHtml = '';
         
-        // 自動相容舊版陣列與新版多行字串
         const formatContent = (val) => Array.isArray(val) ? val.join('\n') : (val || '');
 
         const gStr = formatContent(item.g);
@@ -572,7 +574,7 @@
       });
     }
 
-    // 複製全部（或當前篩選結果）的歷史紀錄
+    // 複製全部歷史紀錄
     function copyAllEntries() {
       let entries = loadEntries();
       const filterDate = document.getElementById('historyDateFilter').value;
@@ -638,7 +640,6 @@
       entries.push(newEntry);
       saveEntriesToStorage(entries);
 
-      // 清空表格
       document.getElementById('gText').value = '';
       document.getElementById('wText').value = '';
       document.getElementById('aText').value = '';
@@ -647,7 +648,7 @@
       switchTab('history');
     }
 
-    // 編輯當天的整篇日記
+    // 編輯當天日記
     function editDayEntry(entryId) {
       let entries = loadEntries();
       let entry = entries.find(e => e.id === entryId);
@@ -655,12 +656,10 @@
 
       const formatContent = (val) => Array.isArray(val) ? val.join('\n') : (val || '');
 
-      // 載回寫日記頁面進行編輯
       document.getElementById('gText').value = formatContent(entry.g);
       document.getElementById('wText').value = formatContent(entry.w);
       document.getElementById('aText').value = formatContent(entry.a);
 
-      // 刪除原本舊的卡片，準備儲存覆蓋
       entries = entries.filter(e => e.id !== entryId);
       saveEntriesToStorage(entries);
 
