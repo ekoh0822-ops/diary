@@ -8,11 +8,11 @@
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☃︎</text></svg>">
   <style>
     :root {
-      --bg-color: #f7f8fa;
+      --bg-color: #f8fafc;
       --card-bg: #ffffff;
-      --text-main: #2c3e50;
-      --text-sub: #7f8c8d;
-      --accent: #3498db;
+      --text-main: #1e293b;
+      --text-sub: #64748b;
+      --accent: #3b82f6;
       --border-color: #e2e8f0;
     }
 
@@ -22,55 +22,71 @@
       background-color: var(--bg-color);
       color: var(--text-main);
       line-height: 1.6;
-      padding: 20px 15px;
-      max-width: 680px;
+      padding: 20px 16px;
+      max-width: 600px;
       margin: 0 auto;
     }
 
     header {
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 20px;
     }
     h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      font-size: 1.4rem;
+      font-weight: 700;
       color: var(--text-main);
     }
-
-    .editor-card {
+    .toggle-calendar-btn {
       background: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       border: 1px solid var(--border-color);
-      margin-bottom: 24px;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--text-sub);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-    .date-picker {
+
+    /* 日曆摺疊區塊 */
+    .calendar-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px;
       border: 1px solid var(--border-color);
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    .calendar-card.collapsed {
+      display: none;
+    }
+    .date-picker-input {
+      width: 100%;
+      border: 1px solid var(--border-color);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 1rem;
       outline: none;
-      margin-bottom: 12px;
       color: var(--text-main);
       background: var(--bg-color);
     }
 
-    /* 固定尺寸 4-7-8 呼吸圓形按鈕 */
+    /* 4-7-8 固定尺寸正向計數呼吸按鈕 */
     .breath-container {
       display: flex;
       justify-content: center;
-      margin: 10px 0 16px 0;
+      margin: 15px 0 20px 0;
     }
     .breath-btn {
-      width: 100px;
-      height: 100px;
+      width: 105px;
+      height: 105px;
       border-radius: 50%;
       border: none;
       background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
-      color: #2c3e50;
-      font-size: 0.9rem;
+      color: #1e293b;
+      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
       box-shadow: 0 0 15px rgba(161, 196, 253, 0.4);
@@ -80,6 +96,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      line-height: 1.3;
     }
     .breath-btn.inhale {
       background: linear-gradient(135deg, #89f7fe, #66a6ff);
@@ -89,79 +106,98 @@
     .breath-btn.hold {
       background: linear-gradient(135deg, #a8edd9, #fed6e3);
       box-shadow: 0 0 20px #a8edd9;
-      color: #2c3e50;
+      color: #1e293b;
     }
     .breath-btn.exhale {
       background: linear-gradient(135deg, #c2e9fb, #a1c4fd);
       box-shadow: 0 0 10px rgba(161, 196, 253, 0.2);
-      color: #2c3e50;
+      color: #1e293b;
     }
 
+    /* 寫作編輯卡片 */
+    .editor-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      border: 1px solid var(--border-color);
+      margin-bottom: 24px;
+    }
     textarea {
       width: 100%;
-      height: 140px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 10px;
+      height: 150px;
+      border: none;
       outline: none;
-      resize: vertical;
-      font-size: 1rem;
-      line-height: 1.6;
+      resize: none;
+      font-size: 1.05rem;
+      line-height: 1.7;
       color: var(--text-main);
       font-family: inherit;
     }
-    .btn-group {
+    .editor-footer {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
       margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+    }
+    .word-count {
+      font-size: 0.85rem;
+      color: var(--text-sub);
     }
     button.save-btn {
       background: var(--accent);
       color: white;
       border: none;
-      padding: 8px 18px;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
       cursor: pointer;
       transition: opacity 0.2s;
     }
     button.save-btn:hover { opacity: 0.9; }
 
-    .entry-list { display: flex; flex-direction: column; gap: 12px; }
+    /* 日記列表 */
+    .entry-list { display: flex; flex-direction: column; gap: 16px; }
     .entry-card {
       background: var(--card-bg);
-      border-radius: 10px;
-      padding: 14px 16px;
+      border-radius: 14px;
+      padding: 18px;
       border: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
       position: relative;
     }
     .entry-date {
       font-size: 0.85rem;
       color: var(--text-sub);
-      margin-bottom: 6px;
-      font-weight: 500;
+      margin-bottom: 8px;
+      font-weight: 600;
     }
     .entry-content {
       white-space: pre-wrap;
       word-break: break-word;
-      font-size: 0.95rem;
+      font-size: 1rem;
+      color: var(--text-main);
     }
     .delete-btn {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 16px;
+      right: 16px;
       background: transparent;
       border: none;
-      color: #e74c3c;
-      padding: 2px 6px;
-      font-size: 0.8rem;
+      color: #ef4444;
+      font-size: 0.85rem;
       cursor: pointer;
+      opacity: 0.7;
     }
+    .delete-btn:hover { opacity: 1; }
     .empty-tip {
       text-align: center;
       color: var(--text-sub);
-      font-size: 0.9rem;
-      margin-top: 30px;
+      font-size: 0.95rem;
+      margin-top: 40px;
     }
   </style>
 </head>
@@ -169,18 +205,24 @@
 
   <header>
     <h1>321 日記單機版 ☃︎</h1>
+    <button class="toggle-calendar-btn" onclick="toggleCalendar()">📅 日期設定</button>
   </header>
 
+  <!-- 日曆可收縮區域 -->
+  <div id="calendarCard" class="calendar-card collapsed">
+    <input type="date" id="entryDate" class="date-picker-input">
+  </div>
+
   <div class="editor-card">
-    <input type="date" id="entryDate" class="date-picker">
-    
     <!-- 固定尺寸的 4-7-8 呼吸圓形按鈕 -->
     <div class="breath-container">
-      <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">4-7-8 呼吸</button>
+      <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">4-7-8<br>呼吸</button>
     </div>
 
-    <textarea id="entryContent" placeholder="今天想記錄些什麼呢..."></textarea>
-    <div class="btn-group">
+    <textarea id="entryContent" placeholder="今天想記錄些什麼呢..." oninput="updateWordCount()"></textarea>
+    
+    <div class="editor-footer">
+      <span id="wordCount" class="word-count">0 字</span>
       <button class="save-btn" onclick="saveEntry()">儲存日記</button>
     </div>
   </div>
@@ -191,57 +233,90 @@
     // 初始化日期為今天
     document.getElementById('entryDate').valueAsDate = new Date();
 
-    // 4-7-8 呼吸計時器邏輯
-    let breathTimer = null;
+    // 日曆摺疊開關
+    function toggleCalendar() {
+      const card = document.getElementById('calendarCard');
+      card.classList.toggle('collapsed');
+    }
+
+    // 字數計算
+    function updateWordCount() {
+      const text = document.getElementById('entryContent').value;
+      document.getElementById('wordCount').innerText = `${text.length} 字`;
+    }
+
+    // 4-7-8 正向計數呼吸邏輯 (從小到大)
     let isBreathing = false;
+    let breathInterval = null;
 
     function toggleBreath() {
       const btn = document.getElementById('breathBtn');
       if (isBreathing) {
-        clearTimeout(breathTimer);
-        isBreathing = false;
-        btn.className = 'breath-btn';
-        btn.innerText = '4-7-8 呼吸';
+        stopBreathing();
         return;
       }
       isBreathing = true;
-      runBreathCycle();
+      startBreathCycle();
     }
 
-    function runBreathCycle() {
+    function stopBreathing() {
+      isBreathing = false;
+      clearInterval(breathInterval);
       const btn = document.getElementById('breathBtn');
-      if (!isBreathing) return;
-
-      // 1. 吸氣 4 秒
-      btn.className = 'breath-btn inhale';
-      btn.innerText = '吸氣...\n(4)';
-      
-      breathTimer = setTimeout(() => {
-        if (!isBreathing) return;
-        // 2. 屏息 7 秒
-        btn.className = 'breath-btn hold';
-        btn.innerText = '屏息...\n(7)';
-        
-        breathTimer = setTimeout(() => {
-          if (!isBreathing) return;
-          // 3. 呼氣 8 秒
-          btn.className = 'breath-btn exhale';
-          btn.innerText = '呼氣...\n(8)';
-          
-          breathTimer = setTimeout(() => {
-            if (isBreathing) runBreathCycle();
-          }, 8000);
-        }, 7000);
-      }, 4000);
+      btn.className = 'breath-btn';
+      btn.innerHTML = '4-7-8<br>呼吸';
     }
 
-    // 從 LocalStorage 載入日記
+    function startBreathCycle() {
+      const btn = document.getElementById('breathBtn');
+      let step = 'inhale'; // inhale (1-4), hold (1-7), exhale (1-8)
+      let count = 1;
+
+      btn.className = 'breath-btn inhale';
+      btn.innerHTML = `吸氣...<br>(${count})`;
+
+      breathInterval = setInterval(() => {
+        if (!isBreathing) return;
+
+        count++;
+
+        if (step === 'inhale') {
+          if (count <= 4) {
+            btn.innerHTML = `吸氣...<br>(${count})`;
+          } else {
+            step = 'hold';
+            count = 1;
+            btn.className = 'breath-btn hold';
+            btn.innerHTML = `屏息...<br>(${count})`;
+          }
+        } else if (step === 'hold') {
+          if (count <= 7) {
+            btn.innerHTML = `屏息...<br>(${count})`;
+          } else {
+            step = 'exhale';
+            count = 1;
+            btn.className = 'breath-btn exhale';
+            btn.innerHTML = `呼氣...<br>(${count})`;
+          }
+        } else if (step === 'exhale') {
+          if (count <= 8) {
+            btn.innerHTML = `呼氣...<br>(${count})`;
+          } else {
+            step = 'inhale';
+            count = 1;
+            btn.className = 'breath-btn inhale';
+            btn.innerHTML = `吸氣...<br>(${count})`;
+          }
+        }
+      }, 1000);
+    }
+
+    // 本地儲存與渲染
     function loadEntries() {
       const data = localStorage.getItem('my_standalone_journal');
       return data ? JSON.parse(data) : [];
     }
 
-    // 渲染日記列表
     function renderEntries() {
       const entries = loadEntries();
       const container = document.getElementById('entryList');
@@ -262,7 +337,6 @@
       `).join('');
     }
 
-    // 儲存日記
     function saveEntry() {
       const date = document.getElementById('entryDate').value;
       const text = document.getElementById('entryContent').value.trim();
@@ -273,20 +347,16 @@
       }
 
       const entries = loadEntries();
-      const newEntry = {
-        id: Date.now().toString(),
-        date: date,
-        text: text
-      };
+      const newEntry = { id: Date.now().toString(), date, text };
 
       entries.push(newEntry);
       localStorage.setItem('my_standalone_journal', JSON.stringify(entries));
 
       document.getElementById('entryContent').value = '';
+      updateWordCount();
       renderEntries();
     }
 
-    // 刪除日記
     function deleteEntry(id) {
       if (!confirm('確定要刪除這篇日記嗎？')) return;
       let entries = loadEntries();
@@ -295,20 +365,12 @@
       renderEntries();
     }
 
-    // 安全轉義
     function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, function(m) {
-        return {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        }[m];
-      });
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[m]));
     }
 
-    // 頁面初始化
     renderEntries();
   </script>
 </body>
