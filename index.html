@@ -22,7 +22,7 @@
       background-color: var(--bg-color);
       color: var(--text-main);
       line-height: 1.6;
-      padding: 20px 16px;
+      padding: 20px 16px 40px;
       max-width: 600px;
       margin: 0 auto;
     }
@@ -31,50 +31,75 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     h1 {
       font-size: 1.4rem;
       font-weight: 700;
       color: var(--text-main);
     }
-    .toggle-calendar-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      cursor: pointer;
+
+    /* 頂部頁籤切換 */
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 12px;
+    }
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
       color: var(--text-sub);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--accent);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    /* 日曆摺疊區塊 */
-    .calendar-card {
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* 日期選擇器 */
+    .date-card {
       background: var(--card-bg);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 12px 16px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
       margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .calendar-card.collapsed { display: none; }
+    .date-card label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
     .date-picker-input {
-      width: 100%;
       border: 1px solid var(--border-color);
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 1rem;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
       outline: none;
       color: var(--text-main);
       background: var(--bg-color);
     }
 
-    /* 放大版 4-7-8 固定尺寸呼吸按鈕 */
+    /* 放大版 4-7-8 呼吸按鈕 */
     .breath-container {
       display: flex;
       justify-content: center;
-      margin: 15px 0 25px 0;
+      margin: 10px 0 25px 0;
     }
     .breath-btn {
       width: 140px;
@@ -116,7 +141,7 @@
       color: #1e293b;
     }
 
-    /* 321 引導寫作卡片 */
+    /* 321 引導卡片 */
     .section-card {
       background: var(--card-bg);
       border-radius: 16px;
@@ -169,11 +194,10 @@
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
       transition: opacity 0.2s;
-      margin-bottom: 24px;
     }
     button.save-btn:hover { opacity: 0.95; }
 
-    /* 日記列表卡片 */
+    /* 歷史日記列表 */
     .entry-list { display: flex; flex-direction: column; gap: 16px; }
     .entry-card {
       background: var(--card-bg);
@@ -181,7 +205,6 @@
       padding: 20px;
       border: 1px solid var(--border-color);
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-      position: relative;
     }
     .entry-header {
       display: flex;
@@ -192,9 +215,9 @@
       padding-bottom: 8px;
     }
     .entry-date {
-      font-size: 0.9rem;
-      color: var(--text-sub);
-      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--accent);
+      font-weight: 700;
     }
     .card-del-btn {
       background: transparent;
@@ -215,7 +238,6 @@
       margin-bottom: 6px;
     }
     
-    /* 單條項目列表 */
     .item-row {
       display: flex;
       justify-content: space-between;
@@ -240,7 +262,7 @@
       text-align: center;
       color: var(--text-sub);
       font-size: 0.95rem;
-      margin-top: 40px;
+      padding: 40px 0;
     }
   </style>
 </head>
@@ -248,75 +270,98 @@
 
   <header>
     <h1>321 日記單機版 ☃︎</h1>
-    <button class="toggle-calendar-btn" onclick="toggleCalendar()">📅 日期設定</button>
   </header>
 
-  <!-- 日曆可收縮區域 -->
-  <div id="calendarCard" class="calendar-card collapsed">
-    <input type="date" id="entryDate" class="date-picker-input">
+  <!-- 頂部頁籤 -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('write')">✍️ 寫日記</button>
+    <button class="tab-btn" onclick="switchTab('history')">📖 歷史紀錄</button>
   </div>
 
-  <!-- 放大版 4-7-8 呼吸按鈕 -->
-  <div class="breath-container">
-    <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">
-      <span>4-7-8</span>
-      <span>呼吸</span>
-    </button>
+  <!-- 頁籤一：寫日記 -->
+  <div id="tab-write" class="tab-content active">
+    
+    <div class="date-card">
+      <label for="entryDate">📅 日記日期</label>
+      <input type="date" id="entryDate" class="date-picker-input">
+    </div>
+
+    <!-- 4-7-8 呼吸按鈕 -->
+    <div class="breath-container">
+      <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">
+        <span>4-7-8</span>
+        <span>呼吸</span>
+      </button>
+    </div>
+
+    <!-- 321 表單 -->
+    <form id="diaryForm" onsubmit="event.preventDefault(); saveEntry();">
+      <div class="section-card">
+        <div class="section-title">🙏 三件感恩的事</div>
+        <div class="section-sub">今天讓我感到感激的事情</div>
+        <div class="input-group">
+          <div class="input-label">第 1 件</div>
+          <input type="text" id="g1" placeholder="例：今天天氣很好">
+        </div>
+        <div class="input-group">
+          <div class="input-label">第 2 件</div>
+          <input type="text" id="g2" placeholder="例：吃到美味的晚餐">
+        </div>
+        <div class="input-group">
+          <div class="input-label">第 3 件</div>
+          <input type="text" id="g3" placeholder="例：工作順利完成">
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">⭐ 兩件做得好的事</div>
+        <div class="section-sub">今天我表現不錯的地方</div>
+        <div class="input-group">
+          <div class="input-label">第 1 件</div>
+          <input type="text" id="w1" placeholder="例：按時完成了工作">
+        </div>
+        <div class="input-group">
+          <div class="input-label">第 2 件</div>
+          <input type="text" id="w2" placeholder="例：堅持做了 10 分鐘運動">
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">💪 一句自我肯定</div>
+        <div class="section-sub">給自己一句真誠的鼓勵</div>
+        <div class="input-group">
+          <input type="text" id="a1" placeholder="例：我今天按時完成了工作，我可真有毅力！">
+        </div>
+      </div>
+
+      <button type="submit" class="save-btn">保存今日記錄</button>
+    </form>
   </div>
 
-  <!-- 321 日記表單區 -->
-  <form id="diaryForm" onsubmit="event.preventDefault(); saveEntry();">
-    <div class="section-card">
-      <div class="section-title">⟡今天讓我感到感激的事情</div>
-      <div class="section-sub"></div>
-      <div class="input-group">
-        <div class="input-label">第 1 件</div>
-        <input type="text" id="g1" placeholder="例：今天天氣很好">
-      </div>
-      <div class="input-group">
-        <div class="input-label">第 2 件</div>
-        <input type="text" id="g2" placeholder="例：吃到美味的晚餐">
-      </div>
-      <div class="input-group">
-        <div class="input-label">第 3 件</div>
-        <input type="text" id="g3" placeholder="例：工作順利完成">
-      </div>
-    </div>
-
-    <div class="section-card">
-      <div class="section-title">⟡今天我表現不錯的地方</div>
-      <div class="section-sub"></div>
-      <div class="input-group">
-        <div class="input-label">第 1 件</div>
-        <input type="text" id="w1" placeholder="例：完成了預定">
-      </div>
-      <div class="input-group">
-        <div class="input-label">第 2 件</div>
-        <input type="text" id="w2" placeholder="例：堅持做了 10 分鐘運動">
-      </div>
-    </div>
-
-    <div class="section-card">
-      <div class="section-title">✦給自己一句真誠的鼓勵</div>
-      <div class="section-sub"></div>
-      <div class="input-group">
-        <input type="text" id="a1" placeholder="例：我今天又活了一天,太不容易了！">
-      </div>
-    </div>
-
-    <button type="submit" class="save-btn">保存今日記錄</button>
-  </form>
-
-  <div id="entryList" class="entry-list"></div>
+  <!-- 頁籤二：歷史紀錄 -->
+  <div id="tab-history" class="tab-content">
+    <div id="entryList" class="entry-list"></div>
+  </div>
 
   <script>
     document.getElementById('entryDate').valueAsDate = new Date();
 
-    function toggleCalendar() {
-      document.getElementById('calendarCard').classList.toggle('collapsed');
+    // 頁籤切換邏輯
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tabName === 'write') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab-write').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tab-history').classList.add('active');
+        renderEntries(); // 切換到歷史紀錄時刷新列表
+      }
     }
 
-    // 4-7-8 正向計數呼吸邏輯
+    // 4-7-8 呼吸計數
     let isBreathing = false;
     let breathInterval = null;
 
@@ -370,7 +415,6 @@
           if (count <= 8) {
             btn.innerHTML = `呼氣...<br>(${count})`;
           } else {
-            // 呼吸結束，顯示雪人與再來一次
             isBreathing = false;
             clearInterval(breathInterval);
             btn.className = 'breath-btn';
@@ -384,7 +428,7 @@
       }, 1000);
     }
 
-    // LocalStorage 管理
+    // Storage 管理
     function loadEntries() {
       const data = localStorage.getItem('my_standalone_journal_321');
       return data ? JSON.parse(data) : [];
@@ -400,7 +444,7 @@
       const container = document.getElementById('entryList');
       
       if (entries.length === 0) {
-        container.innerHTML = '<div class="empty-tip">目前還沒有記錄，開始寫下第一篇吧！</div>';
+        container.innerHTML = '<div class="empty-tip">目前還沒有歷史記錄，快去寫下第一篇吧！</div>';
         return;
       }
 
@@ -409,9 +453,8 @@
       container.innerHTML = entries.map((item) => {
         let contentHtml = '';
         
-        // 感恩的事
         if (item.g && item.g.length) {
-          contentHtml += `<div class="entry-block"><div class="entry-block-title">⟡感恩的事</div>`;
+          contentHtml += `<div class="entry-block"><div class="entry-block-title">🙏 三件感恩的事</div>`;
           contentHtml += item.g.map((x, idx) => `
             <div class="item-row">
               <span>${idx+1}. ${escapeHtml(x)}</span>
@@ -424,9 +467,8 @@
           contentHtml += `</div>`;
         }
 
-        // 做得好的事
         if (item.w && item.w.length) {
-          contentHtml += `<div class="entry-block"><div class="entry-block-title">⟡做得好的事</div>`;
+          contentHtml += `<div class="entry-block"><div class="entry-block-title">⭐ 兩件做得好的事</div>`;
           contentHtml += item.w.map((x, idx) => `
             <div class="item-row">
               <span>${idx+1}. ${escapeHtml(x)}</span>
@@ -439,11 +481,10 @@
           contentHtml += `</div>`;
         }
 
-        // 自我肯定
         if (item.a) {
           contentHtml += `
             <div class="entry-block">
-              <div class="entry-block-title">✦自我肯定</div>
+              <div class="entry-block-title">💪 自我肯定</div>
               <div class="item-row">
                 <span>${escapeHtml(item.a)}</span>
                 <div class="item-actions">
@@ -459,7 +500,7 @@
           <div class="entry-card">
             <div class="entry-header">
               <span class="entry-date">${item.date}</span>
-              <button class="card-del-btn" onclick="deleteDayEntry('${item.id}')">整天刪除</button>
+              <button class="card-del-btn" onclick="deleteDayEntry('${item.id}')">刪除全天</button>
             </div>
             ${contentHtml}
           </div>
@@ -467,7 +508,7 @@
       }).join('');
     }
 
-    // 儲存全天日記
+    // 儲存寫好的日記
     function saveEntry() {
       const date = document.getElementById('entryDate').value;
       const g = [
@@ -492,7 +533,11 @@
       entries.push(newEntry);
       saveEntriesToStorage(entries);
 
+      // 清空表格
       ['g1','g2','g3','w1','w2','a1'].forEach(id => document.getElementById(id).value = '');
+      
+      alert('保存成功！已收納至「📖 歷史紀錄」');
+      switchTab('history'); // 自動切換到歷史紀錄頁面
     }
 
     // 單條內容修改
@@ -527,7 +572,6 @@
         entry[type].splice(index, 1);
       }
 
-      // 若該天內容已清空，則自動刪除整卡片
       if ((!entry.g || entry.g.length === 0) && (!entry.w || entry.w.length === 0) && !entry.a) {
         entries = entries.filter(e => e.id !== entryId);
       }
@@ -548,8 +592,6 @@
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
       }[m]));
     }
-
-    renderEntries();
   </script>
 </body>
 </html>
