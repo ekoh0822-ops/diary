@@ -313,7 +313,7 @@
 
   <!-- 2. 頁籤切換 -->
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('write')">✍️ 寫日記</button>
+    <button class="tab-btn active" onclick="switchTab('write')">✎﹏ 寫日記</button>
     <button class="tab-btn" onclick="switchTab('history')">📖 歷史紀錄</button>
   </div>
 
@@ -321,7 +321,7 @@
   <div id="tab-write" class="tab-content active">
     <form id="diaryForm" onsubmit="event.preventDefault(); saveEntry();">
       <div class="section-card">
-        <div class="section-title">🙏 三件感恩的事</div>
+        <div class="section-title">ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧ 感恩Gratitude</div>
         <div class="section-sub">今天讓我感到感激的事情</div>
         <div class="input-group">
           <div class="input-label">第 1 件</div>
@@ -338,7 +338,7 @@
       </div>
 
       <div class="section-card">
-        <div class="section-title">⭐ 兩件做得好的事</div>
+        <div class="section-title">࿐ ࿔*:･ﾟ 釋放Release</div>
         <div class="section-sub">今天我表現不錯的地方</div>
         <div class="input-group">
           <div class="input-label">第 1 件</div>
@@ -351,7 +351,7 @@
       </div>
 
       <div class="section-card">
-        <div class="section-title">💪 一句自我肯定</div>
+        <div class="section-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 一句自我肯定</div>
         <div class="section-sub">給自己一句真誠的鼓勵</div>
         <div class="input-group">
           <input type="text" id="a1" placeholder="例：我今天按時完成了工作，我可真有毅力！">
@@ -518,7 +518,7 @@
         let contentHtml = '';
         
         if (item.g && item.g.length) {
-          contentHtml += `<div class="entry-block"><div class="entry-block-title">🙏 三件感恩的事</div>`;
+          contentHtml += `<div class="entry-block"><div class="entry-block-title">ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧ 感恩Gratitude</div>`;
           contentHtml += item.g.map((x, idx) => `
             <div class="item-row">
               <span>${idx+1}. ${escapeHtml(x)}</span>
@@ -532,7 +532,7 @@
         }
 
         if (item.w && item.w.length) {
-          contentHtml += `<div class="entry-block"><div class="entry-block-title">⭐ 兩件做得好的事</div>`;
+          contentHtml += `<div class="entry-block"><div class="entry-block-title">࿐ ࿔*:･ﾟ 釋放Release</div>`;
           contentHtml += item.w.map((x, idx) => `
             <div class="item-row">
               <span>${idx+1}. ${escapeHtml(x)}</span>
@@ -548,7 +548,7 @@
         if (item.a) {
           contentHtml += `
             <div class="entry-block">
-              <div class="entry-block-title">💪 自我肯定</div>
+              <div class="entry-block-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 自我肯定</div>
               <div class="item-row">
                 <span>${escapeHtml(item.a)}</span>
                 <div class="item-actions">
@@ -584,13 +584,13 @@
       let textParts = [`${item.date} 日記紀錄\n`];
 
       if (item.g && item.g.length) {
-        textParts.push('【三件感恩的事】');
+        textParts.push('【感恩Gratitude】');
         item.g.forEach((x, i) => textParts.push(`${i + 1}. ${x}`));
         textParts.push('');
       }
 
       if (item.w && item.w.length) {
-        textParts.push('【兩件做得好的事】');
+        textParts.push('【釋放Release】');
         item.w.forEach((x, i) => textParts.push(`${i + 1}. ${x}`));
         textParts.push('');
       }
