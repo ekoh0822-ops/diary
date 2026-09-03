@@ -314,7 +314,7 @@
   <!-- 2. 頁籤切換 -->
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('write')">✎﹏ 寫日記</button>
-    <button class="tab-btn" onclick="switchTab('history')">📖 歷史紀錄</button>
+    <button class="tab-btn" onclick="switchTab('history')">💬 歷史紀錄</button>
   </div>
 
   <!-- 頁籤一：寫日記 (專注今天) -->
@@ -683,7 +683,7 @@
       // 清空表格
       ['g1','g2','g3','w1','w2','a1'].forEach(id => document.getElementById(id).value = '');
       
-      alert('保存成功！已收納至「📖 歷史紀錄」');
+      alert('保存成功！已收納至「💬 歷史紀錄」');
       switchTab('history');
     }
 
