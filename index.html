@@ -219,15 +219,32 @@
       color: var(--accent);
       font-weight: 700;
     }
-    .card-del-btn {
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .card-btn {
       background: transparent;
-      border: none;
-      color: #ef4444;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 2px 8px;
       font-size: 0.8rem;
       cursor: pointer;
-      opacity: 0.7;
+      color: var(--text-sub);
+      transition: all 0.2s;
     }
-    .card-del-btn:hover { opacity: 1; }
+    .card-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .card-btn.del {
+      color: #ef4444;
+      border-color: #fca5a5;
+    }
+    .card-btn.del:hover {
+      background: #fef2f2;
+    }
 
     .entry-block { margin-bottom: 14px; }
     .entry-block:last-child { margin-bottom: 0; }
@@ -357,7 +374,7 @@
       } else {
         document.querySelectorAll('.tab-btn')[1].classList.add('active');
         document.getElementById('tab-history').classList.add('active');
-        renderEntries(); // 切換到歷史紀錄時刷新列表
+        renderEntries();
       }
     }
 
@@ -366,7 +383,6 @@
     let breathInterval = null;
 
     function toggleBreath() {
-      const btn = document.getElementById('breathBtn');
       if (isBreathing) {
         stopBreathing();
         return;
@@ -500,7 +516,10 @@
           <div class="entry-card">
             <div class="entry-header">
               <span class="entry-date">${item.date}</span>
-              <button class="card-del-btn" onclick="deleteDayEntry('${item.id}')">刪除全天</button>
+              <div class="card-actions">
+                <button class="card-btn" onclick="copyFormattedEntry('${item.id}')">📋 複製文字</button>
+                <button class="card-btn del" onclick="deleteDayEntry('${item.id}')">🗑️ 刪除</button>
+              </div>
             </div>
             ${contentHtml}
           </div>
@@ -508,7 +527,41 @@
       }).join('');
     }
 
-    // 儲存寫好的日記
+    // 複製乾淨簡潔的筆記格式
+    function copyFormattedEntry(id) {
+      const entries = loadEntries();
+      const item = entries.find(e => e.id === id);
+      if (!item) return;
+
+      let textParts = [`${item.date} 日記紀錄\n`];
+
+      if (item.g && item.g.length) {
+        textParts.push('【三件感恩的事】');
+        item.g.forEach((x, i) => textParts.push(`${i + 1}. ${x}`));
+        textParts.push('');
+      }
+
+      if (item.w && item.w.length) {
+        textParts.push('【兩件做得好的事】');
+        item.w.forEach((x, i) => textParts.push(`${i + 1}. ${x}`));
+        textParts.push('');
+      }
+
+      if (item.a) {
+        textParts.push('【一句自我肯定】');
+        textParts.push(item.a);
+      }
+
+      const fullText = textParts.join('\n').trim();
+
+      navigator.clipboard.writeText(fullText).then(() => {
+        alert('📋 已複製純文字版本，可以貼至記事本囉！');
+      }).catch(err => {
+        alert('複製失敗，請手動選取文字。');
+      });
+    }
+
+    // 儲存日記
     function saveEntry() {
       const date = document.getElementById('entryDate').value;
       const g = [
@@ -537,7 +590,7 @@
       ['g1','g2','g3','w1','w2','a1'].forEach(id => document.getElementById(id).value = '');
       
       alert('保存成功！已收納至「📖 歷史紀錄」');
-      switchTab('history'); // 自動切換到歷史紀錄頁面
+      switchTab('history');
     }
 
     // 單條內容修改
