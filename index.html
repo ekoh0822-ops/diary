@@ -28,10 +28,8 @@
     }
 
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
+      text-align: center;
+      margin-bottom: 20px;
     }
     h1 {
       font-size: 1.4rem;
@@ -39,63 +37,7 @@
       color: var(--text-main);
     }
 
-    /* 頂部頁籤切換 */
-    .tab-nav {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: 12px;
-    }
-    .tab-btn {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-sub);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .tab-btn.active {
-      background: var(--card-bg);
-      color: var(--accent);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* 日期選擇器 */
-    .date-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 12px 16px;
-      border: 1px solid var(--border-color);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .date-card label {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--text-sub);
-    }
-    .date-picker-input {
-      border: 1px solid var(--border-color);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      outline: none;
-      color: var(--text-main);
-      background: var(--bg-color);
-    }
-
-    /* 放大版 4-7-8 呼吸按鈕 */
+    /* 最頂部：4-7-8 呼吸按鈕 */
     .breath-container {
       display: flex;
       justify-content: center;
@@ -139,6 +81,62 @@
       background: linear-gradient(135deg, #c2e9fb, #a1c4fd);
       box-shadow: 0 0 15px rgba(161, 196, 253, 0.3);
       color: #1e293b;
+    }
+
+    /* 頁籤切換 */
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 12px;
+    }
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--accent);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* 日期選擇卡片 */
+    .date-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .date-card label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+    .date-picker-input {
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      color: var(--text-main);
+      background: var(--bg-color);
     }
 
     /* 321 引導卡片 */
@@ -281,6 +279,21 @@
       font-size: 0.95rem;
       padding: 40px 0;
     }
+
+    .filter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .clear-filter-btn {
+      font-size: 0.8rem;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -289,7 +302,15 @@
     <h1>321 日記單機版 ☃︎</h1>
   </header>
 
-  <!-- 頂部頁籤 -->
+  <!-- 1. 最頂部：4-7-8 呼吸儀式按鈕 -->
+  <div class="breath-container">
+    <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">
+      <span>4-7-8</span>
+      <span>呼吸</span>
+    </button>
+  </div>
+
+  <!-- 2. 頁籤切換 -->
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('write')">✍️ 寫日記</button>
     <button class="tab-btn" onclick="switchTab('history')">📖 歷史紀錄</button>
@@ -301,14 +322,6 @@
     <div class="date-card">
       <label for="entryDate">📅 日記日期</label>
       <input type="date" id="entryDate" class="date-picker-input">
-    </div>
-
-    <!-- 4-7-8 呼吸按鈕 -->
-    <div class="breath-container">
-      <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">
-        <span>4-7-8</span>
-        <span>呼吸</span>
-      </button>
     </div>
 
     <!-- 321 表單 -->
@@ -355,8 +368,19 @@
     </form>
   </div>
 
-  <!-- 頁籤二：歷史紀錄 -->
+  <!-- 頁籤二：歷史紀錄（含日曆篩選） -->
   <div id="tab-history" class="tab-content">
+    
+    <div class="date-card">
+      <label for="historyDateFilter">📅 選擇日期查閱</label>
+      <input type="date" id="historyDateFilter" class="date-picker-input" onchange="renderEntries()">
+    </div>
+
+    <div class="filter-row" id="filterRow" style="display: none;">
+      <span style="font-size: 0.85rem; color: var(--text-sub);" id="filterStatus"></span>
+      <button class="clear-filter-btn" onclick="clearDateFilter()">顯示全部紀錄</button>
+    </div>
+
     <div id="entryList" class="entry-list"></div>
   </div>
 
@@ -455,12 +479,30 @@
       renderEntries();
     }
 
+    function clearDateFilter() {
+      document.getElementById('historyDateFilter').value = '';
+      renderEntries();
+    }
+
     function renderEntries() {
-      const entries = loadEntries();
+      let entries = loadEntries();
       const container = document.getElementById('entryList');
-      
+      const filterDate = document.getElementById('historyDateFilter').value;
+      const filterRow = document.getElementById('filterRow');
+      const filterStatus = document.getElementById('filterStatus');
+
+      if (filterDate) {
+        entries = entries.filter(e => e.date === filterDate);
+        filterRow.style.display = 'flex';
+        filterStatus.innerText = `篩選日期：${filterDate}`;
+      } else {
+        filterRow.style.display = 'none';
+      }
+
       if (entries.length === 0) {
-        container.innerHTML = '<div class="empty-tip">目前還沒有歷史記錄，快去寫下第一篇吧！</div>';
+        container.innerHTML = filterDate 
+          ? '<div class="empty-tip">當天沒有寫日記喔～</div>' 
+          : '<div class="empty-tip">目前還沒有歷史記錄，快去寫下第一篇吧！</div>';
         return;
       }
 
