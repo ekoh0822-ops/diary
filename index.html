@@ -625,57 +625,52 @@
       });
     }
 
-    // 儲存今天日記
-   async function saveEntry() {
-      const date = document.getElementById("entryDate").value;
-      if (!date) return alert("請選擇日期！");
+   // 儲存日記（同天多次寫入時自動追加在後方）
+function saveJournal() {
+  const p3 = document.getElementById('input3').value.trim();
+  const p2 = document.getElementById('input2').value.trim();
+  const p1 = document.getElementById('input1').value.trim();
 
-      const newG = document.getElementById("gratitude").value.trim();
-      const newP = document.getElementById("progress").value.trim();
-      const newA = document.getElementById("affirmation").value.trim();
+  if (!p3 && !p2 && !p1) {
+    alert('請至少填寫一個項目再儲存喔！');
+    return;
+  }
 
-      if (!newG && !newP && !newA) {
-        return alert("請至少填寫一個欄位再儲存喔！");
-      }
+  const now = new Date();
+  const todayDateStr = now.toLocaleDateString('zh-TW'); // 用於判斷是否為同一天 (例如: 2026/9/4)
+  const timeStr = now.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }); // 時間戳記 (例如: 23:35)
 
-      // 取得當前時間（例如 14:30）
-      const now = new Date();
-      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  
+  // 檢查今天是否已經有紀錄了 (比對日期開頭)
+  const existingIndex = data.findIndex(item => item.date.startsWith(todayDateStr));
 
-      // 取得今天原本已有內容（如果有的話）
-      const oldEntry = diaryMap[date] || {};
-      const oldG = typeof oldEntry === "string" ? oldEntry : (oldEntry.gratitude || oldEntry.g || "");
-      const oldP = typeof oldEntry === "string" ? "" : (oldEntry.progress || oldEntry.p || "");
-      const oldA = typeof oldEntry === "string" ? "" : (oldEntry.affirmation || oldEntry.a || "");
+  if (existingIndex !== -1) {
+    // 💡 【當天已有紀錄】：追加在原本內容後面
+    const item = data[existingIndex];
+    if (p3) item.p3 = item.p3 ? `${item.p3}\n--- [${timeStr}] ---\n${p3}` : p3;
+    if (p2) item.p2 = item.p2 ? `${item.p2}\n--- [${timeStr}] ---\n${p2}` : p2;
+    if (p1) item.p1 = item.p1 ? `${item.p1}\n--- [${timeStr}] ---\n${p1}` : p1;
+  } else {
+    // 💡 【今天第一次寫】：建立全新一筆
+    const newEntry = {
+      id: Date.now(),
+      date: now.toLocaleString('zh-TW'),
+      p3, p2, p1
+    };
+    data.unshift(newEntry);
+  }
 
-      // 輔助函式：如果原本有內容，就換行追加（加上時間標籤）
-      const appendContent = (oldVal, newVal) => {
-        if (!newVal) return oldVal;
-        if (!oldVal || !oldVal.trim()) return newVal;
-        return `${oldVal.trim()}\n\n--- 補充于 ${timeStr} ---\n${newVal}`;
-      };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 
-      // 組合新舊內容
-      const entry = {
-        id: oldEntry.id || Date.now().toString(),
-        date: date,
-        gratitude: appendContent(oldG, newG),
-        progress: appendContent(oldP, newP),
-        affirmation: appendContent(oldA, newA),
-        updatedAt: new Date().toISOString()
-      };
-
-      diaryMap[date] = entry;
-      saveLocalAndSync();
-
-      // 清空輸入框
-      document.getElementById("gratitude").value = "";
-      document.getElementById("progress").value = "";
-      document.getElementById("affirmation").value = "";
-
-      alert("已成功儲存並追加到今天的日記！");
-    }
-
+  // 清空輸入框並刷新列表
+  document.getElementById('input3').value = '';
+  document.getElementById('input2').value = '';
+  document.getElementById('input1').value = '';
+  loadHistory();
+  alert('已成功追加/儲存今日日記！');
+}
+    
     // 編輯當天日記
     function editDayEntry(entryId) {
       let entries = loadEntries();
