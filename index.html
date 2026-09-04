@@ -680,6 +680,25 @@
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
       }[m]));
     }
+    // 讓手機自動把網頁「硬化」到手機晶片裡，實現完全離線可用
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE_NAME = 'journal-offline-v1';
+        self.addEventListener('install', (e) => {
+          e.waitUntil(
+            caches.open(CACHE_NAME).then((cache) => cache.addAll(['./', './index.html', './icon.png']))
+          );
+        });
+        self.addEventListener('fetch', (e) => {
+          e.respondWith(
+            caches.match(e.request).then((res) => res || fetch(e.request))
+          );
+        });
+      `;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    }
   </script>
 </body>
 </html>
