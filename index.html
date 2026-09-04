@@ -324,7 +324,7 @@
       <div class="section-card">
         <div class="section-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 顯化Manifest</div>
         <div class="section-sub">寫下自己想像中最好的事情已經發生</div>
-        <textarea id="aText" style="min-height: 70px;" placeholder="例：我按時寫完了論文，真是超有毅力的人！"></textarea>
+        <textarea id="aText" style="min-height: 70px;" placeholder="例：抽到我推的演唱會的神席！"></textarea>
       </div>
 
       <button type="submit" class="save-btn">保存今日記錄</button>
@@ -626,26 +626,54 @@
     }
 
     // 儲存今天日記
-    function saveEntry() {
-      const date = getTodayString();
-      const g = document.getElementById('gText').value.trim();
-      const w = document.getElementById('wText').value.trim();
-      const a = document.getElementById('aText').value.trim();
+   async function saveEntry() {
+      const date = document.getElementById("entryDate").value;
+      if (!date) return alert("請選擇日期！");
 
-      if (!g && !w && !a) { alert('請至少填寫一項內容！'); return; }
+      const newG = document.getElementById("gratitude").value.trim();
+      const newP = document.getElementById("progress").value.trim();
+      const newA = document.getElementById("affirmation").value.trim();
 
-      const entries = loadEntries();
-      const newEntry = { id: Date.now().toString(), date, g, w, a };
+      if (!newG && !newP && !newA) {
+        return alert("請至少填寫一個欄位再儲存喔！");
+      }
 
-      entries.push(newEntry);
-      saveEntriesToStorage(entries);
+      // 取得當前時間（例如 14:30）
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-      document.getElementById('gText').value = '';
-      document.getElementById('wText').value = '';
-      document.getElementById('aText').value = '';
-      
-      alert('保存成功！已收納至「🕮 歷史紀錄」');
-      switchTab('history');
+      // 取得今天原本已有內容（如果有的話）
+      const oldEntry = diaryMap[date] || {};
+      const oldG = typeof oldEntry === "string" ? oldEntry : (oldEntry.gratitude || oldEntry.g || "");
+      const oldP = typeof oldEntry === "string" ? "" : (oldEntry.progress || oldEntry.p || "");
+      const oldA = typeof oldEntry === "string" ? "" : (oldEntry.affirmation || oldEntry.a || "");
+
+      // 輔助函式：如果原本有內容，就換行追加（加上時間標籤）
+      const appendContent = (oldVal, newVal) => {
+        if (!newVal) return oldVal;
+        if (!oldVal || !oldVal.trim()) return newVal;
+        return `${oldVal.trim()}\n\n--- 補充于 ${timeStr} ---\n${newVal}`;
+      };
+
+      // 組合新舊內容
+      const entry = {
+        id: oldEntry.id || Date.now().toString(),
+        date: date,
+        gratitude: appendContent(oldG, newG),
+        progress: appendContent(oldP, newP),
+        affirmation: appendContent(oldA, newA),
+        updatedAt: new Date().toISOString()
+      };
+
+      diaryMap[date] = entry;
+      saveLocalAndSync();
+
+      // 清空輸入框
+      document.getElementById("gratitude").value = "";
+      document.getElementById("progress").value = "";
+      document.getElementById("affirmation").value = "";
+
+      alert("已成功儲存並追加到今天的日記！");
     }
 
     // 編輯當天日記
