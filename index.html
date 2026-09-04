@@ -1,189 +1,684 @@
-<!DOCTYPE1 html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>4-7-8 呼吸練習</title>
+  <title>感恩顯化日記單機版 ☃︎</title>
+
+ <!-- 引用實體 PNG 檔案，Chrome 彈窗與 iPhone 主畫面 100% 正確顯示 -->
+  <link rel="icon" type="image/png" href="./icon.png">
+  <link rel="apple-touch-icon" href="./icon.png">
+
   <style>
     :root {
-      --bg-color: #0f172a;
-      --circle-color: #38bdf8;
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #64748b;
+      --accent: #0284c7;
+      --border-color: #e2e8f0;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: var(--bg-color);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 20px 16px 40px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
       color: var(--text-main);
     }
 
-    /* 呼吸器主要容器 */
-    .breather-container {
+    /* 最頂部：4-7-8 呼吸按鈕 */
+    .breath-container {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 24px;
-    }
-
-    /* 圓形按鈕主體 */
-    .breath-circle {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, rgba(56, 189, 248, 0.05) 70%);
-      border: 2px solid var(--circle-color);
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
-      display: flex;
-      flex-direction: column;
       justify-content: center;
-      align-items: center;
+      margin: 10px 0 25px 0;
+    }
+    .breath-btn {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      color: #1e293b;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      user-select: none;
-      transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+      box-shadow: 0 0 20px rgba(161, 196, 253, 0.45);
+      transition: background 1s ease, box-shadow 1s ease;
+      outline: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.4;
+      padding: 10px;
+    }
+    .breath-btn .btn-icon { font-size: 1.6rem; margin-bottom: 2px; }
+    .breath-btn .btn-sub { font-size: 0.8rem; opacity: 0.85; font-weight: normal; }
+
+    .breath-btn.inhale {
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      box-shadow: 0 0 35px #66a6ff;
+      color: #fff;
+    }
+    .breath-btn.hold {
+      background: linear-gradient(135deg, #a8edd9, #fed6e3);
+      box-shadow: 0 0 25px #a8edd9;
+      color: #1e293b;
+    }
+    .breath-btn.exhale {
+      background: linear-gradient(135deg, #c2e9fb, #a1c4fd);
+      box-shadow: 0 0 15px rgba(161, 196, 253, 0.3);
+      color: #1e293b;
     }
 
-    /* 圓圈內文字樣式 */
-    .breath-action {
-      font-size: 1.25rem;
+    /* 頁籤切換 */
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 12px;
+    }
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px;
+      font-size: 0.95rem;
       font-weight: 600;
-      letter-spacing: 2px;
+      color: var(--text-sub);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--accent);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* 日期選擇卡片 */
+    .date-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .date-card label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+    .date-picker-input {
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      color: var(--text-main);
+      background: var(--bg-color);
+    }
+
+    /* 引導卡片與多行輸入框 */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       margin-bottom: 4px;
     }
-
-    .breath-timer {
-      font-size: 2rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* 圓圈外的 1 行微型提示 */
-    .breath-tips {
-      font-size: 0.8rem;
+    .section-sub {
+      font-size: 0.85rem;
       color: var(--text-sub);
-      letter-spacing: 0.5px;
-      opacity: 0.8;
+      margin-bottom: 14px;
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      line-height: 1.6;
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: var(--accent); }
+
+    button.save-btn {
+      width: 100%;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+      transition: opacity 0.2s;
+    }
+    button.save-btn:hover { opacity: 0.95; }
+
+    /* 歷史日記列表 */
+    .entry-list { display: flex; flex-direction: column; gap: 16px; }
+    .entry-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+    .entry-date {
+      font-size: 0.95rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .card-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--text-sub);
+      transition: all 0.2s;
+    }
+    .card-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .card-btn.del {
+      color: #ef4444;
+      border-color: #fca5a5;
+    }
+    .card-btn.del:hover {
+      background: #fef2f2;
+    }
+
+    .entry-block { margin-bottom: 14px; }
+    .entry-block:last-child { margin-bottom: 0; }
+    .entry-block-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    
+    .item-content {
+      font-size: 0.95rem;
+      color: #334155;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #f8fafc;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .empty-tip {
       text-align: center;
-      max-width: 280px;
-      line-height: 1.4;
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      padding: 40px 0;
     }
 
-    /* 動畫狀態類別 (由 JS 動態切換 transition 時間) */
-    .breath-circle.inhale {
-      transform: scale(1.35);
-      box-shadow: 0 0 40px rgba(56, 189, 248, 0.5);
-      transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 4s ease-in-out;
+    .filter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
     }
-
-    .breath-circle.hold {
-      transform: scale(1.35);
-      box-shadow: 0 0 40px rgba(251, 191, 36, 0.5);
-      border-color: #fbbf24;
-      transition: box-shadow 0.5s ease-in-out, border-color 0.5s ease-in-out;
-    }
-
-    .breath-circle.exhale {
-      transform: scale(1);
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
-      border-color: var(--circle-color);
-      transition: transform 8s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 8s ease-in-out;
+    .clear-filter-btn {
+      font-size: 0.8rem;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <div class="breather-container">
-    <!-- 1. 極簡圓圈按鈕 -->
-    <div class="breath-circle" id="breathCircle" onclick="toggleBreathing()">
-      <div class="breath-action" id="breathAction">開始</div>
-      <div class="breath-timer" id="breathTimer">4-7-8</div>
+  <header>
+    <h1>感恩顯化日記單機版 ☃︎</h1>
+  </header>
+
+  <!-- 1. 最頂部：4-7-8 呼吸儀式按鈕 -->
+  <div class="breath-container">
+    <button id="breathBtn" class="breath-btn" onclick="toggleBreath()">
+      <span>4-7-8</span>
+      <span>呼吸</span>
+    </button>
+  </div>
+
+  <!-- 2. 頁籤切換 -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('write')">✎﹏ 寫日記</button>
+    <button class="tab-btn" onclick="switchTab('history')">🕮 歷史紀錄</button>
+  </div>
+
+  <!-- 頁籤一：寫日記 (專注今天) -->
+  <div id="tab-write" class="tab-content active">
+    <form id="diaryForm" onsubmit="event.preventDefault(); saveEntry();">
+      <div class="section-card">
+        <div class="section-title">ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧ 感恩Gratitude</div>
+        <div class="section-sub">今天讓我感到感激的事情（可按 Enter 自由換行）</div>
+        <textarea id="gText" placeholder="例：1. 今天天氣很好&#10;例：2. 吃到美味的晚餐&#10;例：3. 工作順利完成"></textarea>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">࿐ ࿔*:･ﾟ 釋放Release</div>
+        <div class="section-sub">寫下事情與感受，看見它，讓它去吧（可按 Enter 自由換行）</div>
+        <textarea id="wText" placeholder="例：1. 論文還是沒寫完&#10;例：2. 今日份額的運動量沒有達到，人懶懶的，全怪陰天"></textarea>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 顯化Manifest</div>
+        <div class="section-sub">寫下自己想像中最好的事情已經發生（可按 Enter 自由換行）</div>
+        <textarea id="aText" style="min-height: 70px;" placeholder="例：我抽到我推的演唱會神席！！"></textarea>
+      </div>
+
+      <button type="submit" class="save-btn">保存今日記錄</button>
+    </form>
+  </div>
+
+  <!-- 頁籤二：歷史紀錄（查閱與選擇特定日期） -->
+  <div id="tab-history" class="tab-content">
+    
+    <!-- 一鍵複製全部按鈕 -->
+    <button type="button" class="save-btn" onclick="copyAllEntries()" style="margin-bottom: 16px; background: #475569;">
+      📋 一鍵複製所有歷史紀錄
+    </button>
+
+    <div class="date-card">
+      <label for="historyDateFilter">📅 選擇日期查閱</label>
+      <input type="date" id="historyDateFilter" class="date-picker-input" onchange="renderEntries()">
     </div>
 
-    <!-- 2. 圓圈下方微型姿勢提示 -->
-    <div class="breath-tips">
-      💡 提示：舌尖輕抵上門牙後方，鼻吸嘴吐，放鬆雙肩。
+    <div class="filter-row" id="filterRow" style="display: none;">
+      <span style="font-size: 0.85rem; color: var(--text-sub);" id="filterStatus"></span>
+      <button class="clear-filter-btn" onclick="clearDateFilter()">顯示全部紀錄</button>
     </div>
+
+    <div id="entryList" class="entry-list"></div>
   </div>
 
   <script>
-    let isRunning = false;
-    let timerId = null;
+    // 獲取今天 ISO 日期格式 (YYYY-MM-DD)
+    function getTodayString() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
 
-    const circle = document.getElementById('breathCircle');
-    const actionText = document.getElementById('breathAction');
-    const timerText = document.getElementById('breathTimer');
+    // 頁籤切換邏輯
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-    function toggleBreathing() {
-      if (isRunning) {
-        stopBreathing();
+      if (tabName === 'write') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab-write').classList.add('active');
       } else {
-        startBreathing();
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tab-history').classList.add('active');
+        renderEntries();
       }
     }
 
+    // 4-7-8 呼吸計數
+    let isBreathing = false;
+    let breathInterval = null;
+
+    function toggleBreath() {
+      if (isBreathing) {
+        stopBreathing();
+        return;
+      }
+      isBreathing = true;
+      startBreathCycle();
+    }
+
     function stopBreathing() {
-      isRunning = false;
-      clearTimeout(timerId);
-      circle.className = 'breath-circle';
-      actionText.textContent = '開始';
-      timerText.textContent = '4-7-8';
+      isBreathing = false;
+      clearInterval(breathInterval);
+      const btn = document.getElementById('breathBtn');
+      btn.className = 'breath-btn';
+      btn.innerHTML = '<span>4-7-8</span><span>呼吸</span>';
     }
 
-    function startBreathing() {
-      isRunning = true;
-      runCycle();
+    function startBreathCycle() {
+      const btn = document.getElementById('breathBtn');
+      let step = 'inhale';
+      let count = 1;
+
+      btn.className = 'breath-btn inhale';
+      btn.innerHTML = `吸氣...<br>(${count})`;
+
+      breathInterval = setInterval(() => {
+        if (!isBreathing) return;
+        count++;
+
+        if (step === 'inhale') {
+          if (count <= 4) {
+            btn.innerHTML = `吸氣...<br>(${count})`;
+          } else {
+            step = 'hold'; count = 1;
+            btn.className = 'breath-btn hold';
+            btn.innerHTML = `屏息...<br>(${count})`;
+          }
+        } else if (step === 'hold') {
+          if (count <= 7) {
+            btn.innerHTML = `屏息...<br>(${count})`;
+          } else {
+            step = 'exhale'; count = 1;
+            btn.className = 'breath-btn exhale';
+            btn.innerHTML = `呼氣...<br>(${count})`;
+          }
+        } else if (step === 'exhale') {
+          if (count <= 8) {
+            btn.innerHTML = `呼氣...<br>(${count})`;
+          } else {
+            isBreathing = false;
+            clearInterval(breathInterval);
+            btn.className = 'breath-btn';
+            btn.innerHTML = `
+              <div class="btn-icon">✨</div>
+              <div>完成放鬆</div>
+              <div class="btn-sub">再來一次</div>
+            `;
+          }
+        }
+      }, 1000);
     }
 
-    function runCycle() {
-      if (!isRunning) return;
+    // Storage 管理
+    function loadEntries() {
+      const data = localStorage.getItem('my_standalone_journal_321');
+      return data ? JSON.parse(data) : [];
+    }
 
-      // 1. 吸氣 4 秒
-      circle.className = 'breath-circle inhale';
-      actionText.textContent = '吸氣';
-      countDown(4, () => {
-        if (!isRunning) return;
+    function saveEntriesToStorage(entries) {
+      localStorage.setItem('my_standalone_journal_321', JSON.stringify(entries));
+      renderEntries();
+    }
 
-        // 2. 憋氣 7 秒
-        circle.className = 'breath-circle hold';
-        actionText.textContent = '憋氣';
-        countDown(7, () => {
-          if (!isRunning) return;
+    function clearDateFilter() {
+      document.getElementById('historyDateFilter').value = '';
+      renderEntries();
+    }
 
-          // 3. 吐氣 8 秒
-          circle.className = 'breath-circle exhale';
-          actionText.textContent = '吐氣';
-          countDown(8, () => {
-            if (!isRunning) return;
-            // 循環執行
-            runCycle();
-          });
-        });
+    function renderEntries() {
+      let entries = loadEntries();
+      const container = document.getElementById('entryList');
+      const filterDate = document.getElementById('historyDateFilter').value;
+      const filterRow = document.getElementById('filterRow');
+      const filterStatus = document.getElementById('filterStatus');
+
+      if (filterDate) {
+        entries = entries.filter(e => e.date === filterDate);
+        filterRow.style.display = 'flex';
+        filterStatus.innerText = `篩選日期：${filterDate}`;
+      } else {
+        filterRow.style.display = 'none';
+      }
+
+      if (entries.length === 0) {
+        container.innerHTML = filterDate 
+          ? '<div class="empty-tip">當天沒有寫日記喔～</div>' 
+          : '<div class="empty-tip">目前還沒有歷史記錄，快去寫下第一篇吧！</div>';
+        return;
+      }
+
+      entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      container.innerHTML = entries.map((item) => {
+        let contentHtml = '';
+        
+        const formatContent = (val) => Array.isArray(val) ? val.join('\n') : (val || '');
+
+        const gStr = formatContent(item.g);
+        const wStr = formatContent(item.w);
+        const aStr = formatContent(item.a);
+
+        if (gStr) {
+          contentHtml += `
+            <div class="entry-block">
+              <div class="entry-block-title">ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧ 感恩Gratitude</div>
+              <div class="item-content">${escapeHtml(gStr)}</div>
+            </div>
+          `;
+        }
+
+        if (wStr) {
+          contentHtml += `
+            <div class="entry-block">
+              <div class="entry-block-title">࿐ ࿔*:･ﾟ 釋放Release</div>
+              <div class="item-content">${escapeHtml(wStr)}</div>
+            </div>
+          `;
+        }
+
+        if (aStr) {
+          contentHtml += `
+            <div class="entry-block">
+              <div class="entry-block-title">ଘ(∩^o^)⊃━☆:･ﾟ✧*:･ﾟ✧✯ 顯化Manifest</div>
+              <div class="item-content">${escapeHtml(aStr)}</div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="entry-card">
+            <div class="entry-header">
+              <span class="entry-date">${item.date}</span>
+              <div class="card-actions">
+                <button class="card-btn" onclick="editDayEntry('${item.id}')">✏️ 編輯</button>
+                <button class="card-btn" onclick="copyFormattedEntry('${item.id}')">📋 複製單日</button>
+                <button class="card-btn del" onclick="deleteDayEntry('${item.id}')">🗑️ 刪除</button>
+              </div>
+            </div>
+            ${contentHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 複製單一天的筆記格式
+    function copyFormattedEntry(id) {
+      const entries = loadEntries();
+      const item = entries.find(e => e.id === id);
+      if (!item) return;
+
+      const formatContent = (val) => Array.isArray(val) ? val.join('\n') : (val || '');
+
+      let textParts = [`${item.date} 日記紀錄\n`];
+
+      const gStr = formatContent(item.g);
+      if (gStr) {
+        textParts.push('【感恩Gratitude】');
+        textParts.push(gStr);
+        textParts.push('');
+      }
+
+      const wStr = formatContent(item.w);
+      if (wStr) {
+        textParts.push('【釋放Release】');
+        textParts.push(wStr);
+        textParts.push('');
+      }
+
+      const aStr = formatContent(item.a);
+      if (aStr) {
+        textParts.push('【顯化Manifest】');
+        textParts.push(aStr);
+      }
+
+      const fullText = textParts.join('\n').trim();
+
+      navigator.clipboard.writeText(fullText).then(() => {
+        alert('📋 已複製單日日記！');
+      }).catch(err => {
+        alert('複製失敗，請手動選取文字。');
       });
     }
 
-    function countDown(seconds, onComplete) {
-      timerText.textContent = seconds;
-      let left = seconds;
+    // 複製全部歷史紀錄
+    function copyAllEntries() {
+      let entries = loadEntries();
+      const filterDate = document.getElementById('historyDateFilter').value;
+
+      if (filterDate) {
+        entries = entries.filter(e => e.date === filterDate);
+      }
+
+      if (entries.length === 0) {
+        alert('目前沒有可複製的歷史紀錄！');
+        return;
+      }
+
+      entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      let fullTextParts = ['=== 感恩顯化日記完整紀錄 ===\n'];
+      const formatContent = (val) => Array.isArray(val) ? val.join('\n') : (val || '');
+
+      entries.forEach(item => {
+        fullTextParts.push(`【${item.date}】`);
+
+        const gStr = formatContent(item.g);
+        if (gStr) {
+          fullTextParts.push('感恩Gratitude：');
+          fullTextParts.push(gStr);
+        }
+
+        const wStr = formatContent(item.w);
+        if (wStr) {
+          fullTextParts.push('釋放Release：');
+          fullTextParts.push(wStr);
+        }
+
+        const aStr = formatContent(item.a);
+        if (aStr) {
+          fullTextParts.push(`顯化Manifest：\n${aStr}`);
+        }
+
+        fullTextParts.push('\n------------------------\n');
+      });
+
+      const fullText = fullTextParts.join('\n').trim();
+
+      navigator.clipboard.writeText(fullText).then(() => {
+        alert(`📋 已複製共 ${entries.length} 篇日記！`);
+      }).catch(err => {
+        alert('複製失敗，請檢查剪貼簿權限。');
+      });
+    }
+
+    // 儲存今天日記
+    function saveEntry() {
+      const date = getTodayString();
+      const g = document.getElementById('gText').value.trim();
+      const w = document.getElementById('wText').value.trim();
+      const a = document.getElementById('aText').value.trim();
+
+      if (!g && !w && !a) { alert('請至少填寫一項內容！'); return; }
+
+      const entries = loadEntries();
+      const newEntry = { id: Date.now().toString(), date, g, w, a };
+
+      entries.push(newEntry);
+      saveEntriesToStorage(entries);
+
+      document.getElementById('gText').value = '';
+      document.getElementById('wText').value = '';
+      document.getElementById('aText').value = '';
       
-      const interval = setInterval(() => {
-        if (!isRunning) {
-          clearInterval(interval);
-          return;
-        }
-        left--;
-        if (left > 0) {
-          timerText.textContent = left;
-        } else {
-          clearInterval(interval);
-          onComplete();
-        }
-      }, 1000);
+      alert('保存成功！已收納至「🕮 歷史紀錄」');
+      switchTab('history');
+    }
+
+    // 編輯當天日記
+    function editDayEntry(entryId) {
+      let entries = loadEntries();
+      let entry = entries.find(e => e.id === entryId);
+      if (!entry) return;
+
+      const formatContent = (val) => Array.isArray(val) ? val.join('\n') : (val || '');
+
+      document.getElementById('gText').value = formatContent(entry.g);
+      document.getElementById('wText').value = formatContent(entry.w);
+      document.getElementById('aText').value = formatContent(entry.a);
+
+      entries = entries.filter(e => e.id !== entryId);
+      saveEntriesToStorage(entries);
+
+      switchTab('write');
+      alert('已將日記內容載入「✎﹏ 寫日記」頁面，修改完成後點擊「保存今日記錄」即可覆蓋！');
+    }
+
+    // 整天刪除
+    function deleteDayEntry(id) {
+      if (!confirm('確定要刪除這整天的所有日記嗎？')) return;
+      let entries = loadEntries();
+      entries = entries.filter(e => e.id !== id);
+      saveEntriesToStorage(entries);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[m]));
     }
   </script>
 </body>
