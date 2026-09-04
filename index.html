@@ -628,9 +628,14 @@
    // 儲存日記（萬用修復版：同天多次寫入自動追加）
 function saveJournal() {
   try {
-    const p3 = document.getElementById('input3').value.trim();
-    const p2 = document.getElementById('input2').value.trim();
-    const p1 = document.getElementById('input1').value.trim();
+    // 💡 自動相容模式：無論 HTML 裡的 ID 是 input3/2/1 還是 p3/2/1 都能抓到
+const el3 = document.getElementById('input3') || document.getElementById('p3') || document.querySelector('textarea:nth-of-type(1)');
+const el2 = document.getElementById('input2') || document.getElementById('p2') || document.querySelector('textarea:nth-of-type(2)');
+const el1 = document.getElementById('input1') || document.getElementById('p1') || document.querySelector('textarea:nth-of-type(3)');
+
+const p3 = el3 ? el3.value.trim() : '';
+const p2 = el2 ? el2.value.trim() : '';
+const p1 = el1 ? el1.value.trim() : '';
 
     if (!p3 && !p2 && !p1) {
       alert('請輸入內容！');
