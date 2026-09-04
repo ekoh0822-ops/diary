@@ -626,7 +626,7 @@
     }
 
    // 儲存日記（萬用修復版：同天多次寫入自動追加）
-function saveJournal() {
+function saveEntry() {
   try {
     // 💡 自動相容模式：無論 HTML 裡的 ID 是 input3/2/1 還是 p3/2/1 都能抓到
 const el3 = document.getElementById('input3') || document.getElementById('p3') || document.querySelector('textarea:nth-of-type(1)');
